@@ -1,4 +1,4 @@
-name: Build .NET Projects
+name: Build .NET Project
 
 on:
   push:
@@ -20,13 +20,13 @@ jobs:
           dotnet-version: '6.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore "XV2 Xml Serializer.sln"
+        run: dotnet restore "XV2 Xml Serializer.csproj"
 
-      - name: Build Debug (Any CPU)
-        run: dotnet build "XV2 Xml Serializer.sln" --configuration Debug --no-restore
+      - name: Build Debug
+        run: dotnet build "XV2 Xml Serializer.csproj" --configuration Debug --no-restore
 
-      - name: Build Release (Any CPU)
-        run: dotnet build "XV2 Xml Serializer.sln" --configuration Release --no-restore
+      - name: Build Release
+        run: dotnet build "XV2 Xml Serializer.csproj" --configuration Release --no-restore
 
       - name: Upload Debug binaries
         uses: actions/upload-artifact@v4
