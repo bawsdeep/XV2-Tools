@@ -1,0 +1,44 @@
+name: Build .NET Framework Projects
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v2
+
+      - name: Restore NuGet packages
+        run: nuget restore "XV2 Xml Serializer.sln"
+
+      - name: Build Debug
+        run: msbuild "XV2 Xml Serializer.sln" /p:Configuration=Debug /p:Platform="Any CPU"
+
+      - name: Build Release
+        run: msbuild "XV2 Xml Serializer.sln" /p:Configuration=Release /p:Platform="Any CPU"
+
+      - name: Upload Debug binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-binaries
+          path: |
+            **/bin/Debug/**
+
+      - name: Upload Release binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-binaries
+          path: |
+            **/bin/Release/**
