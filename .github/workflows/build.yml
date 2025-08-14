@@ -1,11 +1,10 @@
-name: Build Solution
+name: Build .NET Projects
 
 on:
-  workflow_dispatch:
   push:
-    branches: [ master ]
+    branches:
+      - master
   pull_request:
-    branches: [ master ]
 
 jobs:
   build:
@@ -15,28 +14,30 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v2
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
         with:
-          vs-version: '[16.0,17.0)' # VS2019 for your .sln
-
-      - name: Setup NuGet
-        uses: NuGet/setup-nuget@v2
+          dotnet-version: '6.0.x'
 
       - name: Restore dependencies
-        run: nuget restore "XV2 Xml Serializer.sln"
+        run: dotnet restore "XV2 Xml Serializer.sln"
 
-      - name: Build Release
-        run: msbuild "XV2 Xml Serializer.sln" /p:Configuration=Release /p:Platform="Any CPU"
+      - name: Build Debug (Any CPU)
+        run: dotnet build "XV2 Xml Serializer.sln" --configuration Debug --no-restore
 
-      - name: Upload build artifacts
+      - name: Build Release (Any CPU)
+        run: dotnet build "XV2 Xml Serializer.sln" --configuration Release --no-restore
+
+      - name: Upload Debug binaries
         uses: actions/upload-artifact@v4
         with:
-          name: build-output
+          name: debug-binaries
           path: |
-            XV2 Xml Serializer/bin/Release/**
-            Xv2CoreLib/bin/Release/**
-            EEPK Editor/bin/Release/**
-            LB Mod Installer/bin/Release/**
-            AudioCueEditor/bin/Release/**
-            LB_Common/bin/Release/**
+            **/bin/Debug/**
+
+      - name: Upload Release binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-binaries
+          path: |
+            **/bin/Release/**
