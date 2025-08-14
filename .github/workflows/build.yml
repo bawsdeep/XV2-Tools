@@ -1,4 +1,4 @@
-name: Build XV2-Tools
+name: Build XV2 Tools
 
 on:
   push:
@@ -13,28 +13,34 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: 9.0.x
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1
 
-      - name: Restore NuGet packages
-        run: dotnet restore "XV2 Tools.sln"
+    - name: Restore NuGet packages
+      run: nuget restore "XV2 Tools.sln"
 
-      - name: Build solution
-        run: dotnet build "XV2 Tools.sln" --configuration Release --no-restore
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1
 
-      - name: List all .exe files
-        run: |
-          echo "Listing all .exe files:"
-          find . -type f -iname "*.exe"
+    - name: Build solution
+      run: msbuild "XV2 Tools.sln" /p:Configuration=Release /m
 
-      - name: Upload all .exe artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: exe-artifacts
-          path: |
-            **/*.exe
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: XV2Tools-Binaries
+        path: |
+          ./AudioCueEditor/bin/Release/*.exe
+          ./AudioCueEditor/bin/Release/*.dll
+          ./EEPK Editor/bin/Release/*.exe
+          ./EEPK Editor/bin/Release/*.dll
+          ./LB Mod Installer/bin/Release/*.exe
+          ./LB Mod Installer/bin/Release/*.dll
+          ./LB_Common/bin/Release/*.exe
+          ./LB_Common/bin/Release/*.dll
+          ./Xv2CoreLib/bin/Release/*.dll
+          ./XV2 Xml Serializer/bin/Release/*.exe
+          ./XV2 Xml Serializer/bin/Release/*.dll
