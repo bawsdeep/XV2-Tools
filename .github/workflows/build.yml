@@ -1,4 +1,4 @@
-name: Build XV2 Xml Serializer
+name: Build XV2 Tools
 
 on:
   push:
@@ -19,23 +19,35 @@ jobs:
         with:
           dotnet-version: '6.0.x'
 
-      - name: Restore XV2 Xml Serializer
-        run: dotnet restore "./XV2 Xml Serializer/XV2 Xml Serializer.csproj"
+      - name: Restore all dependencies
+        run: dotnet restore "./XV2 Tools.sln"
 
       - name: Build Debug
-        run: dotnet build "./XV2 Xml Serializer/XV2 Xml Serializer.csproj" --configuration Debug --no-restore
+        run: dotnet build "./XV2 Tools.sln" --configuration Debug --no-restore
 
       - name: Build Release
-        run: dotnet build "./XV2 Xml Serializer/XV2 Xml Serializer.csproj" --configuration Release --no-restore
+        run: dotnet build "./XV2 Tools.sln" --configuration Release --no-restore
 
-      - name: Upload Debug binaries
+      - name: Upload all Debug binaries
         uses: actions/upload-artifact@v4
         with:
           name: debug-binaries
-          path: "./XV2 Xml Serializer/bin/Debug/**"
+          path: |
+            ./AudioCueEditor/bin/Debug/**
+            ./EEPK Editor/bin/Debug/**
+            ./LB Mod Installer/bin/Debug/**
+            ./LB_Common/bin/Debug/**
+            ./XV2 Xml Serializer/bin/Debug/**
+            ./Xv2CoreLib/bin/Debug/**
 
-      - name: Upload Release binaries
+      - name: Upload all Release binaries
         uses: actions/upload-artifact@v4
         with:
           name: release-binaries
-          path: "./XV2 Xml Serializer/bin/Release/**"
+          path: |
+            ./AudioCueEditor/bin/Release/**
+            ./EEPK Editor/bin/Release/**
+            ./LB Mod Installer/bin/Release/**
+            ./LB_Common/bin/Release/**
+            ./XV2 Xml Serializer/bin/Release/**
+            ./Xv2CoreLib/bin/Release/**
