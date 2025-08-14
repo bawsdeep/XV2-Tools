@@ -1,4 +1,4 @@
-name: Build .NET Projects
+name: Build .NET Framework Projects
 
 on:
   push:
@@ -14,19 +14,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '6.0.x'
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
 
-      - name: Restore dependencies
-        run: dotnet restore "XV2 Xml Serializer.sln"
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v2
 
-      - name: Build Debug (Any CPU)
-        run: dotnet build "XV2 Xml Serializer.sln" --configuration Debug --no-restore
+      - name: Restore NuGet packages
+        run: nuget restore "XV2 Xml Serializer.sln"
 
-      - name: Build Release (Any CPU)
-        run: dotnet build "XV2 Xml Serializer.sln" --configuration Release --no-restore
+      - name: Build Debug
+        run: msbuild "XV2 Xml Serializer.sln" /p:Configuration=Debug /p:Platform="Any CPU"
+
+      - name: Build Release
+        run: msbuild "XV2 Xml Serializer.sln" /p:Configuration=Release /p:Platform="Any CPU"
 
       - name: Upload Debug binaries
         uses: actions/upload-artifact@v4
