@@ -3,7 +3,7 @@ name: Build XV2 Tools
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
 
 jobs:
@@ -11,43 +11,44 @@ jobs:
     runs-on: windows-latest
 
     steps:
+      # Checkout repo
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Setup .NET SDK
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '6.0.x'
 
-      - name: Restore all dependencies
-        run: dotnet restore "./XV2 Tools.sln"
+      # Install NuGet CLI (needed if packages.config is used)
+      - name: Install NuGet
+        uses: nuget/setup-nuget@v1
 
+      # Restore solution packages
+      - name: Restore dependencies
+        run: dotnet restore "XV2 Tools.sln"
+
+      # Build all projects in Debug
       - name: Build Debug
-        run: dotnet build "./XV2 Tools.sln" --configuration Debug --no-restore
+        run: dotnet build "XV2 Tools.sln" --configuration Debug --no-restore
 
+      # Build all projects in Release
       - name: Build Release
-        run: dotnet build "./XV2 Tools.sln" --configuration Release --no-restore
+        run: dotnet build "XV2 Tools.sln" --configuration Release --no-restore
 
-      - name: Upload all Debug binaries
+      # Upload Debug binaries
+      - name: Upload Debug binaries
         uses: actions/upload-artifact@v4
         with:
           name: debug-binaries
           path: |
-            ./AudioCueEditor/bin/Debug/**
-            ./EEPK Editor/bin/Debug/**
-            ./LB Mod Installer/bin/Debug/**
-            ./LB_Common/bin/Debug/**
-            ./XV2 Xml Serializer/bin/Debug/**
-            ./Xv2CoreLib/bin/Debug/**
+            **/bin/Debug/**
 
-      - name: Upload all Release binaries
+      # Upload Release binaries
+      - name: Upload Release binaries
         uses: actions/upload-artifact@v4
         with:
           name: release-binaries
           path: |
-            ./AudioCueEditor/bin/Release/**
-            ./EEPK Editor/bin/Release/**
-            ./LB Mod Installer/bin/Release/**
-            ./LB_Common/bin/Release/**
-            ./XV2 Xml Serializer/bin/Release/**
-            ./Xv2CoreLib/bin/Release/**
+            **/bin/Release/**
