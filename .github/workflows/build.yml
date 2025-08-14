@@ -3,7 +3,7 @@ name: Build XV2 Tools
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
 
 jobs:
